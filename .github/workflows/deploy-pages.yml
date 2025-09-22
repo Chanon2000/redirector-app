@@ -52,7 +52,7 @@ jobs:
         with:
           # Angular 20 default: dist/<project>/browser
           path: |
-            dist/**/browser
+            dist/redirector-app
 
   deploy:
     needs: build
