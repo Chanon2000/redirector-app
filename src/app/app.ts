@@ -11,8 +11,8 @@ export class App {
 
   constructor() {
     console.log('App component initialized');
-    // console.log('Current URL:', window.location.href);
-    // console.log('Current Path:', window.location.pathname);
+    console.log('Current URL:', window.location.href);
+    console.log('Current Path:', window.location.pathname);
     const pathMatch = window.location.pathname.match(/^\/([^/?]+)$/);
     const query: URLSearchParams = new URLSearchParams(window.location.search);
 
