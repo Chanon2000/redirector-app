@@ -34,23 +34,25 @@ jobs:
       - name: Build Angular
         run: npm run build:pages
 
-      # (ทางเลือก) สร้าง .nojekyll กัน Jekyll ในโฟลเดอร์ผลลัพธ์
-      - name: Add .nojekyll
+      # ค้นหา dist ที่มี index.html
+      - name: Resolve dist dir
+        id: dist
+        shell: bash
         run: |
-          DIST_DIR=$(find dist -type d -name browser -print -quit)
-          touch "$DIST_DIR/.nojekyll"
+          DIST="$(dirname "$(find dist -type f -name index.html -print -quit)")"
+          echo "DIST=$DIST" >> $GITHUB_OUTPUT
 
-      # (ทางเลือก) ถ้าคุณใช้ custom domain และเก็บโดเมนในไฟล์ CNAME ใน repo root
-      # ก็ copy ลง dist ได้ เช่น:
-      # - name: Add CNAME
-      #   run: |
-      #     DIST_DIR=$(find dist -type d -name browser -print -quit)
-      #     [ -f CNAME ] && cp CNAME "$DIST_DIR/CNAME" || true
+      # ทำ 404.html จาก index.html และใส่ .nojekyll
+      - name: Add 404 and .nojekyll
+        run: |
+          cp "${{ steps.dist.outputs.DIST }}/index.html" "${{ steps.dist.outputs.DIST }}/404.html"
+          touch "${{ steps.dist.outputs.DIST }}/.nojekyll"
 
+      # อัปโหลด artifact จากโฟลเดอร์เดียวกัน
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/redirector-app/browser
+          path: ${{ steps.dist.outputs.DIST }}
             
 
   deploy:
